@@ -15,26 +15,26 @@ args = parser.parse_args()
 
 
 def main():
-    o = org.registry[args.org]
+    """Linter application entry point."""
+    myorg = org.registry[args.org]
     token = os.environ.get('NETBOX_TOKEN', None)
     if token is None:
         print('Please set NETBOX_TOKEN before running this script', file=sys.stderr)
-        sys.exit(1)
-    nb = o.new_connection(token)
-    rules = o.rules()
+        return 1
+    netbox = myorg.netbox_api(token)
+    rule_settings = myorg.rule_settings()
     issues = 0
-    l = linter.Linter(rules)
+    mylinter = linter.Linter(rule_settings)
     # Lint devices
-    for idx, n in enumerate(l.lint(nb.dcim.devices.all())):
+    for idx, issue in enumerate(mylinter.lint(netbox.dcim.devices.all())):
         issues = idx+1
-        print(n)
+        print(issue)
     if issues:
-        print('{} issues found'.format(issues))
-        sys.exit(2)
-    else:
-        print('No issues found')
-        sys.exit(0)
+        print('{} issues found 😱'.format(issues))
+        return 2
+    print('No issues found 😎')
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

@@ -4,15 +4,19 @@ import pynetbox
 import requests
 from requests_toolbelt.adapters import host_header_ssl
 
+from linter import util
 
-class Elastx:
-    def new_connection(self, token):
-        s = requests.Session()
-        s.mount('https://', host_header_ssl.HostHeaderSSLAdapter())
-        s.headers = {'Host': 'netbox.s.elx.io'}
-        nb = pynetbox.api('https://localhost:32337', token=token)
-        nb.http_session = s
-        return nb
 
-    def rules(self):
-        return {}
+def netbox_api(token: str) -> pynetbox.core.api.Api:
+    """Return a new Netbox API connection API object."""
+    ses = requests.Session()
+    ses.mount('https://', host_header_ssl.HostHeaderSSLAdapter())
+    ses.headers = {'Host': 'netbox.s.elx.io'}
+    netbox = pynetbox.api('https://localhost:32337', token=token)
+    netbox.http_session = ses
+    return netbox
+
+
+def rule_settings() -> util.RuleSettings:
+    """Return organization specific rule settings."""
+    return {}
