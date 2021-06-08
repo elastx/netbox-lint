@@ -1,0 +1,40 @@
+#!app/bin/python3
+"""Runs a linting pass over the configured Netbox instance."""
+import argparse
+import os
+import sys
+
+import org
+import linter
+
+parser = argparse.ArgumentParser(description='Netbox rule linter')
+parser.add_argument('-o', dest='org', action='store', required=True,
+                    help='what organization configuration to apply', choices=org.registry.keys())
+
+args = parser.parse_args()
+
+
+def main():
+    o = org.registry[args.org]
+    token = os.environ.get('NETBOX_TOKEN', None)
+    if token is None:
+        print('Please set NETBOX_TOKEN before running this script', file=sys.stderr)
+        sys.exit(1)
+    nb = o.new_connection(token)
+    rules = o.rules()
+    issues = 0
+    l = linter.Linter(rules)
+    # Lint devices
+    for idx, n in enumerate(l.lint(nb.dcim.devices.all())):
+        issues = idx+1
+        print(n)
+    if issues:
+        print('{} issues found'.format(issues))
+        sys.exit(2)
+    else:
+        print('No issues found')
+        sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()
