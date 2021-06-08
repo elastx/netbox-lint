@@ -22,6 +22,19 @@ class DeviceNamingRule:
             return
         if not re.match(r'[a-z0-9-]+', device.name):
             yield 'Name contains invalid characters'
+        if device.site["id"] is None:
+            yield 'Device must be located in a site'
+        if device.asset_tag is None:
+            yield 'Device must have an asset tag'
+        if device.device_role["name"] == "Compute":
+            if device.primary_ip is None:
+                yield 'Devices with status "active" must have a primary IP'
+            if device.status["value"] == "staged":
+                if device.platform is not None:
+                    yield 'Devices with status "staged" should not be assigned a platform'
+            if device.status["value"] == "active":
+                if device.platform is None:
+                    yield 'Devices with status "active" should not be assigned a platform'            
         if len(device.name) < 3:
             yield 'Name is too short'
 
