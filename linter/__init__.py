@@ -17,7 +17,7 @@ class LintResult:
         self.record = record
 
     def __str__(self):
-        return '{}: {}: {}'.format(self.check.ID, self.record, self.msg)
+        return '{}: ID={}, Name={}: {}'.format(self.check.ID, self.record.id, self.record.name, self.msg)
 
 
 class Linter:
@@ -34,6 +34,5 @@ class Linter:
          # Run the check
         for r in self.rules:
             for record in recordset:
-                res = r.check(record)
-                if res:
+                for res in r.check(record):
                     yield LintResult(r, record, res)

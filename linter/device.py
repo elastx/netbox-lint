@@ -1,7 +1,8 @@
 """Netbox linting rules for Devices."""
 import typing
 import pynetbox
-from typing import Optional
+import re
+from typing import Iterator
 
 from . import util
 
@@ -12,10 +13,14 @@ class DeviceNamingRule:
     def __init__(self, settings: util.RuleSetting):
         pass
 
-    def check(self, device: pynetbox.models.dcim.Devices) -> Optional[str]:
-        if device.name == '70037B1':
-            return 'Name is banned'
-        return None
+    def check(self, device: pynetbox.models.dcim.Devices) -> Iterator[str]:
+        if device.name is None:
+            yield 'Device has no name'
+            return
+        if not re.match(r'[a-z0-9-]+', device.name):
+            yield 'Name contains invalid characters'
+        if len(device.name) < 3:
+            yield 'Name is too short'
 
 
 AllRules = [
