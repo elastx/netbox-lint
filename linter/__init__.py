@@ -45,7 +45,7 @@ class Linter:
 
     def lint(self, recordset: pynetbox.core.response.RecordSet) -> Iterator[LintResult]:
         """Lint a given Netbox RecordSet."""
-        for rule in self.rules:
-            for record in recordset:
+        for record in recordset:
+            for rule in self.rules:
                 for res in rule.check(record):
                     yield LintResult(rule, record, res)
