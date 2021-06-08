@@ -5,3 +5,7 @@ app: requirements.txt
 .PHONY: codelint
 codelint:
 	app/bin/pylint netboxlint $(wildcard org/*.py linter/*.py)
+
+.PHONY: test
+test:
+	app/bin/python3 -m unittest linter.device_test

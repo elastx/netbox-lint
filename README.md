@@ -17,5 +17,8 @@ $ NETBOX_TOKEN="$(<~/.netbox-token)" ./netboxlint -o elastx
 To add a new rule, add it under e.g. `linter/device.py` and make sure to
 add it to the AllRules array in the end.
 
+You can add tests to ensure that your check is correct to e.g. `linter/device_test.py`.
+To run the tests run `make check`.
+
 Before submitting a pull request, run `make codelint` to see if there are any
 issues with the written code.
