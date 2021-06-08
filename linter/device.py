@@ -34,7 +34,16 @@ class DeviceNamingRule:
                     yield 'Devices with status "staged" should not be assigned a platform'
             if device.status["value"] == "active":
                 if device.platform is None:
-                    yield 'Devices with status "active" should not be assigned a platform'            
+                    yield 'Devices with status "active" should not be assigned a platform'  
+        if device.device_role["name"] == "HSM":
+            if device.primary_ip is None:
+                yield 'Devices with status "active" must have a primary IP'
+        if device.device_role["name"] == "Storage":
+            if device.primary_ip is None:
+                yield 'Devices with status "active" must have a primary IP'
+        if device.device_role["name"] == "Network":
+            if device.primary_ip is None:
+                yield 'Devices with status "active" must have a primary IP' 
         if len(device.name) < 3:
             yield 'Name is too short'
 
