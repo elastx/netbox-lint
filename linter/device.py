@@ -47,7 +47,6 @@ class DeviceAssetTagRule:
         if device.asset_tag is None:
             yield 'Device must have an asset tag'
 
-
 class DevicePrimaryIPRule:
     """Ensure that specified device has primary ip set."""
     ID = 'DEVICE-PRIMARYIP'
@@ -56,24 +55,10 @@ class DevicePrimaryIPRule:
         pass
 
     def check(self, device: pynetbox.models.dcim.Devices) -> Iterator[str]:
-        if device.device_role['name'] == "Compute":
+        if device.device_role['name'] in ("Compute", "HSM","Storage", "Network"):
             if device.primary_ip is None:
-                yield 'Devices with status "active" must have a primary IP'
-            if device.status['value'] == "staged":
-                if device.platform is not None:
-                    yield 'Devices with status "staged" should not be assigned a platform'
-            if device.status['value'] == "active":
-                if device.platform is None:
-                    yield 'Devices with status "active" should not be assigned a platform'
-        if device.device_role['name'] == "HSM":
-            if device.primary_ip is None:
-                yield 'Devices with status "active" must have a primary IP'
-        if device.device_role['name'] == "Storage":
-            if device.primary_ip is None:
-                yield 'Devices with status "active" must have a primary IP'
-        if device.device_role['name'] == "Network":
-            if device.primary_ip is None:
-                yield 'Devices with status "active" must have a primary IP'
+                yield 'Devices with role "{}" must have a primary IP'.format(
+                    device.device_role['name'])
 
 class DeviceLifecycleRule:
     """Ensure that device lifecycle state."""
