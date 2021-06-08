@@ -1,4 +1,5 @@
 """Netbox linting rules for Devices."""
+# pylint: disable=C0116 (missing-function-docstring)
 # pylint: disable=R0201 (no-self-use)
 # pylint: disable=R0903 (too-few-public-methods)
 import re
@@ -16,7 +17,6 @@ class DeviceNamingRule:
         pass
 
     def check(self, device: pynetbox.models.dcim.Devices) -> Iterator[str]:
-        """Runs the check."""
         if device.name is None:
             yield 'Device has no name'
             return
@@ -26,6 +26,7 @@ class DeviceNamingRule:
             yield 'Name is too short'
 
 class DeviceLocationRule:
+    """Ensure that device location is sane."""
     ID = 'DEVICE-LOCATION'
 
     def __init__(self, settings: util.RuleSetting):
@@ -36,6 +37,7 @@ class DeviceLocationRule:
             yield 'Device must be located in a site'
 
 class DeviceAssetTagRule:
+    """Ensure that device has an asset tag."""
     ID = 'DEVICE-ASSETTAG'
 
     def __init__(self, settings: util.RuleSetting):
@@ -47,6 +49,7 @@ class DeviceAssetTagRule:
 
 
 class DevicePrimaryIPRule:
+    """Ensure that specified device has primary ip set."""
     ID = 'DEVICE-PRIMARYIP'
 
     def __init__(self, settings: util.RuleSetting):
@@ -61,7 +64,7 @@ class DevicePrimaryIPRule:
                     yield 'Devices with status "staged" should not be assigned a platform'
             if device.status['value'] == "active":
                 if device.platform is None:
-                    yield 'Devices with status "active" should not be assigned a platform'  
+                    yield 'Devices with status "active" should not be assigned a platform'
         if device.device_role['name'] == "HSM":
             if device.primary_ip is None:
                 yield 'Devices with status "active" must have a primary IP'
@@ -70,10 +73,11 @@ class DevicePrimaryIPRule:
                 yield 'Devices with status "active" must have a primary IP'
         if device.device_role['name'] == "Network":
             if device.primary_ip is None:
-                yield 'Devices with status "active" must have a primary IP' 
+                yield 'Devices with status "active" must have a primary IP'
 
-class DeviceStatusRule:
-    ID = 'DEVICE-STATUS'
+class DeviceLifecycleRule:
+    """Ensure that device lifecycle state."""
+    ID = 'DEVICE-LIFECYCLE'
 
     def __init__(self, settings: util.RuleSetting):
         pass
@@ -85,12 +89,12 @@ class DeviceStatusRule:
                     yield 'Devices with status "staged" should not be assigned a platform'
             if device.status['value'] == "active":
                 if device.platform is None:
-                    yield 'Devices with status "active" should not be assigned a platform'  
+                    yield 'Devices with status "active" should not be assigned a platform'
 
 AllRules = [
     DeviceNamingRule,
     DeviceLocationRule,
     DeviceAssetTagRule,
     DevicePrimaryIPRule,
-    DeviceStatusRule
+    DeviceLifecycleRule
 ]
