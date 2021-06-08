@@ -89,7 +89,7 @@ class DeviceLifecycleRule:
                     yield 'Devices with status "staged" should not be assigned a platform'
             if device.status['value'] == "active":
                 if device.platform is None:
-                    yield 'Devices with status "active" should not be assigned a platform'
+                    yield 'Devices with status "active" should be assigned a platform'
 
 AllRules = [
     DeviceNamingRule,
