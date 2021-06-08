@@ -4,7 +4,7 @@ import argparse
 import os
 import sys
 
-import org
+import organization as org
 import linter
 
 parser = argparse.ArgumentParser(description='Netbox rule linter')
